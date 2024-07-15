@@ -37,6 +37,10 @@ const EmployeeListPage: React.FC = () => {
     }
   };
 
+  const handleRefresh = () => {
+    refetch();
+  };
+
   if (isLoading) return <div className="container">Loading...</div>;
   if (error) return <div className="container">Error: {error.message}</div>;
 
@@ -70,14 +74,23 @@ const EmployeeListPage: React.FC = () => {
             />
             Admin
           </label>
-          <Button
-            onClick={handleAddEmployee}
-            disabled={!newEmployeeName || !newEmployeeEmail}
-            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
-            variant="contained"
-          >
-            Add Employee
-          </Button>
+          <div className="flex space-x-2">
+            <Button
+              onClick={handleAddEmployee}
+              disabled={!newEmployeeName || !newEmployeeEmail}
+              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
+              variant="contained"
+            >
+              Add Employee
+            </Button>
+            <Button
+              onClick={handleRefresh}
+              className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-700"
+              variant="contained"
+            >
+              Refresh List
+            </Button>
+          </div>
         </div>
         {employees && (
           <EmployeeList employees={employees} onRemoveEmployee={handleRemoveEmployee} />
