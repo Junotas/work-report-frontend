@@ -17,5 +17,6 @@ export const useEmployees = (): UseQueryResult<Employee[], Error> => {
   return useQuery<Employee[], Error>({
     queryKey: ['employees'],
     queryFn: fetchEmployees,
+    initialData: [],
   });
 };
