@@ -8,7 +8,7 @@ import './index.css';
 
 const App: React.FC = () => {
   return (
-    <Router>
+    <Router basename="/work-report-frontend">
       <div>
         <Header />
         <Routes>
