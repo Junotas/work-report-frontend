@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
 import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
@@ -13,8 +11,8 @@ interface Employee {
 }
 
 interface TimeReport {
-  startTime: Date | null;
-  endTime: Date | null;
+  startTime: string;  
+  endTime: string;
 }
 
 interface EmployeeProfileProps {
@@ -22,26 +20,13 @@ interface EmployeeProfileProps {
 }
 
 const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee }) => {
-  const [timeReport, setTimeReport] = useState<TimeReport>({ startTime: null, endTime: null });
+  const { control, handleSubmit } = useForm<TimeReport>();
 
-  const handleStartTimeChange = (date: Date | null) => {
-    setTimeReport((prev) => ({ ...prev, startTime: date }));
-  };
-
-  const handleEndTimeChange = (date: Date | null) => {
-    setTimeReport((prev) => ({ ...prev, endTime: date }));
-  };
-
-  const handleSubmit = async () => {
-    if (!timeReport.startTime || !timeReport.endTime) {
-      alert('Please select both start and end times.');
-      return;
-    }
-
+  const onSubmit: SubmitHandler<TimeReport> = async (data) => {
     const reportData = {
       employeeId: employee.id,
-      startTime: timeReport.startTime.toISOString(),
-      endTime: timeReport.endTime.toISOString(),
+      startTime: data.startTime,
+      endTime: data.endTime,
       isApproved: false,
     };
 
@@ -61,27 +46,35 @@ const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee }) => {
       <p>Admin: {employee.isAdmin ? 'Yes' : 'No'}</p>
 
       <h3 className="text-xl font-semibold mt-6 mb-2">Report Hours Worked</h3>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <div className="mb-4">
-          <DateTimePicker
-            label="Start Time"
-            value={timeReport.startTime}
-            onChange={handleStartTimeChange}
-            renderInput={(props) => <TextField {...props} fullWidth />}
-          />
-        </div>
-        <div className="mb-4">
-          <DateTimePicker
-            label="End Time"
-            value={timeReport.endTime}
-            onChange={handleEndTimeChange}
-            renderInput={(props) => <TextField {...props} fullWidth />}
-          />
-        </div>
-      </LocalizationProvider>
-      <Button variant="contained" color="primary" onClick={handleSubmit}>
-        Submit Time Report
-      </Button>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          name="startTime"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Start Time"
+              type="text"
+              fullWidth
+            />
+          )}
+        />
+        <Controller
+          name="endTime"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="End Time"
+              type="text"
+              fullWidth
+            />
+          )}
+        />
+        <Button type="submit" variant="contained" color="primary">
+          Submit Time Report
+        </Button>
+      </form>
     </div>
   );
 };
