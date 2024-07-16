@@ -10,6 +10,7 @@ const EmployeeListPage: React.FC = () => {
   const [newEmployeeName, setNewEmployeeName] = useState('');
   const [newEmployeeEmail, setNewEmployeeEmail] = useState('');
   const [newEmployeeIsAdmin, setNewEmployeeIsAdmin] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleAddEmployee = async () => {
     const newEmployee = {
@@ -38,12 +39,23 @@ const EmployeeListPage: React.FC = () => {
     }
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
   const handleRefresh = () => {
     refetch();
   };
 
   if (isLoading) return <div className="container">Loading...</div>;
   if (error) return <div className="container">Error: {error.message}</div>;
+
+  const filteredEmployees = employees?.filter(employee =>
+    employee.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const adminEmployees = filteredEmployees?.filter(employee => employee.isAdmin);
+  const nonAdminEmployees = filteredEmployees?.filter(employee => !employee.isAdmin);
 
   return (
     <div className="container mx-auto p-4">
@@ -93,8 +105,20 @@ const EmployeeListPage: React.FC = () => {
             </Button>
           </div>
         </div>
-        {employees && (
-          <EmployeeList employees={employees} onRemoveEmployee={handleRemoveEmployee} />
+        <TextField
+          label="Search Employees"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="mb-4"
+          fullWidth
+        />
+        <h2 className="text-2xl font-bold mb-2">Admin Employees</h2>
+        {adminEmployees && (
+          <EmployeeList employees={adminEmployees} onRemoveEmployee={handleRemoveEmployee} />
+        )}
+        <h2 className="text-2xl font-bold mb-2">Non-Admin Employees</h2>
+        {nonAdminEmployees && (
+          <EmployeeList employees={nonAdminEmployees} onRemoveEmployee={handleRemoveEmployee} />
         )}
       </main>
     </div>
