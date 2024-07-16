@@ -1,7 +1,10 @@
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TextField, Button } from '@mui/material';
 import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
+import dayjs from 'dayjs';
 
 interface Employee {
   id: number;
@@ -11,22 +14,29 @@ interface Employee {
 }
 
 interface TimeReport {
-  startTime: string;  
-  endTime: string;
+  startTime: Date | null;
+  endTime: Date | null;
 }
 
 interface EmployeeProfileProps {
   employee: Employee;
 }
 
+const dateFormat = "YYYY-MM-DDTHH:mm:ss";
+
 const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee }) => {
   const { control, handleSubmit } = useForm<TimeReport>();
 
   const onSubmit: SubmitHandler<TimeReport> = async (data) => {
+    if (!data.startTime || !data.endTime) {
+      alert('Please select both start and end times.');
+      return;
+    }
+
     const reportData = {
       employeeId: employee.id,
-      startTime: data.startTime,
-      endTime: data.endTime,
+      startTime: dayjs(data.startTime).format(dateFormat),
+      endTime: dayjs(data.endTime).format(dateFormat),
       isApproved: false,
     };
 
@@ -46,35 +56,41 @@ const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee }) => {
       <p>Admin: {employee.isAdmin ? 'Yes' : 'No'}</p>
 
       <h3 className="text-xl font-semibold mt-6 mb-2">Report Hours Worked</h3>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="startTime"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Start Time"
-              type="text"
-              fullWidth
-            />
-          )}
-        />
-        <Controller
-          name="endTime"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="End Time"
-              type="text"
-              fullWidth
-            />
-          )}
-        />
-        <Button type="submit" variant="contained" color="primary">
-          Submit Time Report
-        </Button>
-      </form>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+         <Controller
+            name="startTime"
+            control={control}
+            render={({ field }) => (
+              <DateTimePicker
+                label="Start date"
+                // @ts-expect-error: Type error from controller and datetimepicker
+                value={field.value}
+                onChange={(date) => field.onChange(date)}
+                // @ts-expect-error: Type error from controller and datetimepicker
+                renderInput={(params) => <TextField {...params} fullWidth />}
+                />
+            )}
+          />
+          <Controller
+            name="endTime"
+            control={control}
+            render={({ field }) => (
+              <DateTimePicker
+                label="End date"
+                // @ts-expect-error: Type error from controller and datetimepicker
+                value={field.value}
+                onChange={(date) => field.onChange(date)}
+                // @ts-expect-error: Type error from controller and datetimepicker
+                renderInput={(params) => <TextField {...params} fullWidth />}
+              />
+            )}
+          />
+          <Button type="submit" variant="contained" color="primary">
+            Submit Time Report
+          </Button>
+        </form>
+      </LocalizationProvider>
     </div>
   );
 };

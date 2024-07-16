@@ -5,7 +5,10 @@ import EmployeeProfile from '../components/EmployeeProfile';
 
 const EmployeeProfilePage: React.FC = () => {
   const { employeeId } = useParams<{ employeeId: string }>();
-  const { data: employees } = useEmployees();
+  const { isLoading, error, data: employees } = useEmployees();
+
+  if (isLoading) return <div className="container">Loading...</div>;
+  if (error) return <div className="container">Error: {error.message}</div>;
 
   const employee = employees?.find(emp => emp.id === Number(employeeId));
 
