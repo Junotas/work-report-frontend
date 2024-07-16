@@ -3,6 +3,7 @@ import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { TextField, Button } from '@mui/material';
 import axios from 'axios';
+import { API_BASE_URL } from '../apiConfig';
 
 interface Employee {
   id: number;
@@ -45,7 +46,7 @@ const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee }) => {
     };
 
     try {
-      await axios.post('/api/time-reports', reportData);
+      await axios.post(`${API_BASE_URL}/api/time-reports`, reportData);
       alert('Time report submitted successfully!');
     } catch (error) {
       console.error('Error submitting time report:', error);

@@ -1,5 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
+import { API_BASE_URL } from './apiConfig';
 
 interface Employee {
   id: number;
@@ -9,7 +10,7 @@ interface Employee {
 }
 
 const fetchEmployees = async (): Promise<Employee[]> => {
-  const response = await axios.get('/api/employees');
+  const response = await axios.get(`${API_BASE_URL}/api/employees`);
   return response.data;
 };
 

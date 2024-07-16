@@ -3,6 +3,7 @@ import { useEmployees } from '../useEmployees';
 import EmployeeList from '../components/EmployeeList';
 import { TextField, Button } from '@mui/material';
 import axios from 'axios';
+import { API_BASE_URL } from '../apiConfig';
 
 const EmployeeListPage: React.FC = () => {
   const { isLoading, error, data: employees, refetch } = useEmployees();
@@ -18,7 +19,7 @@ const EmployeeListPage: React.FC = () => {
     };
 
     try {
-      await axios.post('/api/employees', newEmployee);
+      await axios.post(`${API_BASE_URL}/api/employees`, newEmployee);
       refetch();
       setNewEmployeeName('');
       setNewEmployeeEmail('');
@@ -30,7 +31,7 @@ const EmployeeListPage: React.FC = () => {
 
   const handleRemoveEmployee = async (employeeId: number) => {
     try {
-      await axios.delete(`/api/employees/${employeeId}`);
+      await axios.delete(`${API_BASE_URL}/api/employees/${employeeId}`);
       refetch();
     } catch (error) {
       console.error('Error removing employee:', error);
