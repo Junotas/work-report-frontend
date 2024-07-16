@@ -1,24 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { API_BASE_URL } from '../apiConfig';
 import TimeReportList from '../components/TimeReportList';
-import { fetchTimeReports } from '../services/timeReportService';
+
+interface TimeReport {
+  id: number;
+  employeeId: number;
+  startTime: string;
+  endTime: string;
+  isApproved: boolean;
+}
 
 const TimeReportListPage: React.FC = () => {
-  const [timeReports, setTimeReports] = useState([]);
+  // Declare state with specific type
+  const [timeReports, setTimeReports] = useState<TimeReport[]>([]);
 
   useEffect(() => {
-    const getTimeReports = async () => {
-      const reports = await fetchTimeReports();
-      setTimeReports(reports);
+    const fetchTimeReports = async () => {
+      try {
+        const response = await axios.get<TimeReport[]>(`${API_BASE_URL}/api/time-reports`);
+        setTimeReports(response.data);
+      } catch (error) {
+        console.error('Failed to fetch time reports:', error);
+      }
     };
-    getTimeReports();
+
+    fetchTimeReports();
   }, []);
 
   return (
     <div className="container mx-auto p-4">
-      <header className="mb-4">
-        <h1 className="text-3xl font-bold">Time Reports</h1>
-      </header>
-      <TimeReportList timeReports={timeReports} />
+      <h1 className="text-3xl font-bold mb-4">Time Report List</h1>
+      {timeReports && <TimeReportList timeReports={timeReports} />}
     </div>
   );
 };
