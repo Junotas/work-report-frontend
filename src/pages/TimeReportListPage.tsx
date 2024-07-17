@@ -3,43 +3,44 @@ import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
 import TimeReportList from '../components/TimeReportList';
 
+interface Employee {
+  id: number;
+  name: string;
+}
+
 interface TimeReport {
   id: number;
   employeeId: number;
   startTime: string;
   endTime: string;
   isApproved: boolean;
-  employeeName?: string; // Added employee name to the interface
+  employeeName?: string; // Add employee name to the interface
 }
 
 const TimeReportListPage: React.FC = () => {
   const [timeReports, setTimeReports] = useState<TimeReport[]>([]);
-  const [employees, setEmployees] = useState<{ [key: number]: string }>({});
 
   useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const response = await axios.get<{ id: number; name: string }[]>(`${API_BASE_URL}/api/employees`);
-        const employeeMap = response.data.reduce((acc, employee) => {
-          acc[employee.id] = employee.name;
-          return acc;
-        }, {} as { [key: number]: string });
-        setEmployees(employeeMap);
-      } catch (error) {
-        console.error('Failed to fetch employees:', error);
-      }
-    };
-
     const fetchTimeReports = async () => {
       try {
         const response = await axios.get<TimeReport[]>(`${API_BASE_URL}/api/time-reports`);
-        setTimeReports(response.data);
+        
+        // Fetch all employees once
+        const employeeResponse = await axios.get<Employee[]>(`${API_BASE_URL}/api/employees`);
+        const employees = employeeResponse.data;
+
+        // Map employee names to time reports
+        const reportsWithEmployeeNames = response.data.map(report => {
+          const employee = employees.find(emp => emp.id === report.employeeId);
+          return {...report, employeeName: employee ? employee.name : 'Unknown'};
+        });
+
+        setTimeReports(reportsWithEmployeeNames);
       } catch (error) {
         console.error('Failed to fetch time reports:', error);
       }
     };
 
-    fetchEmployees();
     fetchTimeReports();
   }, []);
 
@@ -53,10 +54,20 @@ const TimeReportListPage: React.FC = () => {
     }
   };
 
+  const deleteTimeReport = async (id: number) => {
+    try {
+      await axios.delete(`${API_BASE_URL}/api/time-reports/${id}`);
+      // Update local state to remove the deleted time report
+      setTimeReports(timeReports.filter(report => report.id !== id));
+    } catch (error) {
+      console.error('Failed to delete time report:', error);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">Time Report List</h1>
-      {timeReports && <TimeReportList timeReports={timeReports} employees={employees} toggleApproval={toggleApproval} />}
+      {timeReports && <TimeReportList timeReports={timeReports} toggleApproval={toggleApproval} deleteTimeReport={deleteTimeReport} />}
     </div>
   );
 };

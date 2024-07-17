@@ -11,22 +11,28 @@ interface TimeReport {
 
 interface TimeReportListProps {
   timeReports: TimeReport[];
-  employees: { [key: number]: string }; // Pass employees mapping to the component
   toggleApproval: (id: number, isApproved: boolean) => void;
+  deleteTimeReport: (id: number) => void;
 }
 
-const TimeReportList: React.FC<TimeReportListProps> = ({ timeReports, employees, toggleApproval }) => {
+const TimeReportList: React.FC<TimeReportListProps> = ({ timeReports, toggleApproval, deleteTimeReport }) => {
   return (
     <ul className="list-none p-0">
       {timeReports.map((report) => (
         <li key={report.id} className="flex justify-between items-center p-2 mb-2 bg-gray-100 rounded hover:bg-gray-200">
-          <span>{`Report ID: ${report.id}, Employee: ${employees[report.employeeId] || 'Unknown'}`}</span>
-          <span>{`From: ${report.startTime} To: ${report.endTime}`}</span>
+          <span>{`Report ID: ${report.id}, Employee: ${report.employeeName || 'Unknown'}`}</span>
+          <span>{`From: ${report.startTime || 'null'} To: ${report.endTime || 'null'}`}</span>
           <button
             onClick={() => toggleApproval(report.id, report.isApproved)}
-            className={`px-3 py-1 rounded ${report.isApproved ? 'bg-red-500 hover:bg-red-700' : 'bg-green-500 hover:bg-green-700'} text-white`}
+            className={`bg-${report.isApproved ? 'red' : 'green'}-500 text-white px-3 py-1 rounded hover:bg-${report.isApproved ? 'red' : 'green'}-700`}
           >
             {report.isApproved ? 'Disapprove' : 'Approve'}
+          </button>
+          <button
+            onClick={() => deleteTimeReport(report.id)}
+            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700 ml-2"
+          >
+            Delete
           </button>
         </li>
       ))}
