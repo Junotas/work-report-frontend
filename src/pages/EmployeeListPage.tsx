@@ -4,6 +4,7 @@ import EmployeeList from '../components/EmployeeList';
 import { TextField, Button } from '@mui/material';
 import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
+import { FaPlus, FaSync, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const EmployeeListPage: React.FC = () => {
   const { isLoading, error, data: employees, refetch } = useEmployees();
@@ -71,6 +72,7 @@ const EmployeeListPage: React.FC = () => {
           onClick={toggleAddEmployee}
           className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
           variant="contained"
+          startIcon={showAddEmployee ? <FaEyeSlash /> : <FaEye />}
         >
           {showAddEmployee ? 'Hide Add Employee' : 'Show Add Employee'}
         </Button>
@@ -106,6 +108,7 @@ const EmployeeListPage: React.FC = () => {
               disabled={!newEmployeeName || !newEmployeeEmail}
               className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
               variant="contained"
+              startIcon={<FaPlus />}
             >
               Add Employee
             </Button>
@@ -113,6 +116,7 @@ const EmployeeListPage: React.FC = () => {
               onClick={handleRefresh}
               className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-700"
               variant="contained"
+              startIcon={<FaSync />}
             >
               Refresh List
             </Button>
