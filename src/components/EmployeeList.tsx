@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FaTrash } from 'react-icons/fa';
 
 interface Employee {
   id: number;
@@ -27,7 +28,7 @@ const EmployeeList: React.FC<EmployeeListProps> = ({ employees, onRemoveEmployee
             onClick={() => onRemoveEmployee(employee.id)}
             className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
           >
-            Remove
+            <FaTrash />
           </button>
         </li>
       ))}

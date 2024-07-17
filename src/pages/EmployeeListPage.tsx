@@ -83,15 +83,15 @@ const EmployeeListPage: React.FC = () => {
             label="Name"
             value={newEmployeeName}
             onChange={(e) => setNewEmployeeName(e.target.value)}
-            className="mb-2"
             fullWidth
+            style={{ marginBottom: '16px' }}  // Added margin for spacing
           />
           <TextField
             label="Email"
             value={newEmployeeEmail}
             onChange={(e) => setNewEmployeeEmail(e.target.value)}
-            className="mb-2"
             fullWidth
+            style={{ marginBottom: '16px' }}  // Added margin for spacing
           />
           <label className="flex items-center mb-2">
             <input
