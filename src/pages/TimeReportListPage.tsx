@@ -48,7 +48,6 @@ const TimeReportListPage: React.FC = () => {
   const toggleApproval = async (id: number, isApproved: boolean) => {
     try {
       await axios.patch(`${API_BASE_URL}/api/time-reports/approve/${id}`, { isApproved: !isApproved });
-      // Update local state to reflect the change
       setTimeReports(timeReports.map(report => report.id === id ? { ...report, isApproved: !isApproved } : report));
     } catch (error) {
       console.error('Failed to update approval status:', error);
@@ -58,17 +57,30 @@ const TimeReportListPage: React.FC = () => {
   const deleteTimeReport = async (id: number) => {
     try {
       await axios.delete(`${API_BASE_URL}/api/time-reports/${id}`);
-      // Update local state to remove the deleted time report
       setTimeReports(timeReports.filter(report => report.id !== id));
     } catch (error) {
       console.error('Failed to delete time report:', error);
     }
   };
 
+  const approvedReports = timeReports.filter(report => report.isApproved);
+  const nonApprovedReports = timeReports.filter(report => !report.isApproved);
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">Time Report List</h1>
-      {timeReports && <TimeReportList timeReports={timeReports} toggleApproval={toggleApproval} deleteTimeReport={deleteTimeReport} />}
+      <h2 className="text-2xl font-bold mb-2">Approved Reports</h2>
+      {approvedReports.length > 0 ? (
+        <TimeReportList timeReports={approvedReports} toggleApproval={toggleApproval} deleteTimeReport={deleteTimeReport} />
+      ) : (
+        <p>No approved reports found.</p>
+      )}
+      <h2 className="text-2xl font-bold mb-2">Non-Approved Reports</h2>
+      {nonApprovedReports.length > 0 ? (
+        <TimeReportList timeReports={nonApprovedReports} toggleApproval={toggleApproval} deleteTimeReport={deleteTimeReport} />
+      ) : (
+        <p>No non-approved reports found.</p>
+      )}
     </div>
   );
 };

@@ -28,16 +28,10 @@ const TimeReportList: React.FC<TimeReportListProps> = ({ timeReports, toggleAppr
           <span>{`Report ID: ${report.id}, Employee: ${report.employeeName || 'Unknown'}`}</span>
           <span>{`From: ${dayjs(report.startTime).format('DD/MM/YYYY hh:mm')} To: ${dayjs(report.endTime).format('DD/MM/YYYY hh:mm')}`}</span>
           <div className="flex space-x-2">
-            <button 
-              onClick={() => toggleApproval(report.id, report.isApproved)} 
-              className={`px-3 py-1 rounded ${report.isApproved ? 'bg-green-500 hover:bg-green-700' : 'bg-blue-500 hover:bg-blue-700'} text-white`}
-            >
+            <button onClick={() => toggleApproval(report.id, report.isApproved)} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700">
               {report.isApproved ? <FaTimes /> : <FaCheck />}
             </button>
-            <button 
-              onClick={() => deleteTimeReport(report.id)} 
-              className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
-            >
+            <button onClick={() => deleteTimeReport(report.id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700">
               <FaTrash />
             </button>
           </div>
