@@ -31,15 +31,11 @@ const TimeReportListPage: React.FC = () => {
           axios.get<Employee[]>(`${API_BASE_URL}/api/employees`),
         ]);
 
-        console.log('Time Reports:', timeReportsResponse.data);  // Log the fetched time reports
-        console.log('Employees:', employeesResponse.data);  // Log the fetched employees
-
         const reportsWithEmployeeNames = timeReportsResponse.data.map(report => {
           const employee = employeesResponse.data.find(emp => emp.id === report.employee.id);
           return { ...report, employeeName: employee ? employee.name : 'Unknown' };
         });
 
-        console.log('Reports with Employee Names:', reportsWithEmployeeNames);  // Log the final mapped time reports
         setTimeReports(reportsWithEmployeeNames);
       } catch (error) {
         console.error('Failed to fetch time reports or employees:', error);
