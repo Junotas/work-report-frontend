@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useEmployees } from '../useEmployees';
 import EmployeeList from '../components/EmployeeList';
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, Box } from '@mui/material';
 import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
 
@@ -63,13 +63,14 @@ const EmployeeListPage: React.FC = () => {
         <h1 className="text-3xl font-bold">Employee List</h1>
       </header>
       <main>
-        <div className="mb-4">
+        <Box component="div" className="mb-4">
           <TextField
             label="Name"
             value={newEmployeeName}
             onChange={(e) => setNewEmployeeName(e.target.value)}
             className="mb-2"
             fullWidth
+            style={{ marginBottom: '16px' }} // Added margin for spacing
           />
           <TextField
             label="Email"
@@ -77,6 +78,7 @@ const EmployeeListPage: React.FC = () => {
             onChange={(e) => setNewEmployeeEmail(e.target.value)}
             className="mb-2"
             fullWidth
+            style={{ marginBottom: '16px' }} // Added margin for spacing
           />
           <label className="flex items-center mb-2">
             <input
@@ -104,7 +106,7 @@ const EmployeeListPage: React.FC = () => {
               Refresh List
             </Button>
           </div>
-        </div>
+        </Box>
         <TextField
           label="Search Employees"
           value={searchTerm}
