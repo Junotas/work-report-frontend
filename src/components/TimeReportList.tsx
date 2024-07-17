@@ -2,11 +2,14 @@ import React from 'react';
 
 interface TimeReport {
   id: number;
-  employeeId: number;
+  employee: {
+    id: number;
+    name: string;
+  };
+  employeeName?: string;
   startTime: string;
   endTime: string;
   isApproved: boolean;
-  employeeName?: string;
 }
 
 interface TimeReportListProps {
@@ -21,17 +24,11 @@ const TimeReportList: React.FC<TimeReportListProps> = ({ timeReports, toggleAppr
       {timeReports.map((report) => (
         <li key={report.id} className="flex justify-between items-center p-2 mb-2 bg-gray-100 rounded hover:bg-gray-200">
           <span>{`Report ID: ${report.id}, Employee: ${report.employeeName || 'Unknown'}`}</span>
-          <span>{`From: ${report.startTime || 'null'} To: ${report.endTime || 'null'}`}</span>
-          <button
-            onClick={() => toggleApproval(report.id, report.isApproved)}
-            className={`bg-${report.isApproved ? 'red' : 'green'}-500 text-white px-3 py-1 rounded hover:bg-${report.isApproved ? 'red' : 'green'}-700`}
-          >
+          <span>{`From: ${report.startTime} To: ${report.endTime}`}</span>
+          <button onClick={() => toggleApproval(report.id, report.isApproved)} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700">
             {report.isApproved ? 'Disapprove' : 'Approve'}
           </button>
-          <button
-            onClick={() => deleteTimeReport(report.id)}
-            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700 ml-2"
-          >
+          <button onClick={() => deleteTimeReport(report.id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700">
             Delete
           </button>
         </li>

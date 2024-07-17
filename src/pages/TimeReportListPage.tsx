@@ -10,11 +10,14 @@ interface Employee {
 
 interface TimeReport {
   id: number;
-  employeeId: number;
+  employee: {
+    id: number;
+    name: string;
+  };
+  employeeName?: string;
   startTime: string;
   endTime: string;
   isApproved: boolean;
-  employeeName?: string; // Add employee name to the interface
 }
 
 const TimeReportListPage: React.FC = () => {
@@ -23,21 +26,23 @@ const TimeReportListPage: React.FC = () => {
   useEffect(() => {
     const fetchTimeReports = async () => {
       try {
-        const response = await axios.get<TimeReport[]>(`${API_BASE_URL}/api/time-reports`);
-        
-        // Fetch all employees once
-        const employeeResponse = await axios.get<Employee[]>(`${API_BASE_URL}/api/employees`);
-        const employees = employeeResponse.data;
+        const [timeReportsResponse, employeesResponse] = await Promise.all([
+          axios.get<TimeReport[]>(`${API_BASE_URL}/api/time-reports`),
+          axios.get<Employee[]>(`${API_BASE_URL}/api/employees`),
+        ]);
 
-        // Map employee names to time reports
-        const reportsWithEmployeeNames = response.data.map(report => {
-          const employee = employees.find(emp => emp.id === report.employeeId);
-          return {...report, employeeName: employee ? employee.name : 'Unknown'};
+        console.log('Time Reports:', timeReportsResponse.data);  // Log the fetched time reports
+        console.log('Employees:', employeesResponse.data);  // Log the fetched employees
+
+        const reportsWithEmployeeNames = timeReportsResponse.data.map(report => {
+          const employee = employeesResponse.data.find(emp => emp.id === report.employee.id);
+          return { ...report, employeeName: employee ? employee.name : 'Unknown' };
         });
 
+        console.log('Reports with Employee Names:', reportsWithEmployeeNames);  // Log the final mapped time reports
         setTimeReports(reportsWithEmployeeNames);
       } catch (error) {
-        console.error('Failed to fetch time reports:', error);
+        console.error('Failed to fetch time reports or employees:', error);
       }
     };
 
