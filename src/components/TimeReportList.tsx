@@ -11,15 +11,16 @@ interface TimeReport {
 
 interface TimeReportListProps {
   timeReports: TimeReport[];
+  employees: { [key: number]: string }; // Pass employees mapping to the component
   toggleApproval: (id: number, isApproved: boolean) => void;
 }
 
-const TimeReportList: React.FC<TimeReportListProps> = ({ timeReports, toggleApproval }) => {
+const TimeReportList: React.FC<TimeReportListProps> = ({ timeReports, employees, toggleApproval }) => {
   return (
     <ul className="list-none p-0">
       {timeReports.map((report) => (
         <li key={report.id} className="flex justify-between items-center p-2 mb-2 bg-gray-100 rounded hover:bg-gray-200">
-          <span>{`Report ID: ${report.id}, Employee: ${report.employeeName}`}</span>
+          <span>{`Report ID: ${report.id}, Employee: ${employees[report.employeeId] || 'Unknown'}`}</span>
           <span>{`From: ${report.startTime} To: ${report.endTime}`}</span>
           <button
             onClick={() => toggleApproval(report.id, report.isApproved)}
