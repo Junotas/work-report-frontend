@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useEmployees } from '../useEmployees';
 import EmployeeList from '../components/EmployeeList';
-import { TextField, Button, Box } from '@mui/material';
+import { TextField, Button } from '@mui/material';
 import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
 
@@ -11,6 +11,7 @@ const EmployeeListPage: React.FC = () => {
   const [newEmployeeEmail, setNewEmployeeEmail] = useState('');
   const [newEmployeeIsAdmin, setNewEmployeeIsAdmin] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showAddEmployee, setShowAddEmployee] = useState(false);
 
   const handleAddEmployee = async () => {
     const newEmployee = {
@@ -25,6 +26,7 @@ const EmployeeListPage: React.FC = () => {
       setNewEmployeeName('');
       setNewEmployeeEmail('');
       setNewEmployeeIsAdmin(false);
+      setShowAddEmployee(false);
     } catch (error) {
       console.error('Error adding employee:', error);
     }
@@ -47,6 +49,10 @@ const EmployeeListPage: React.FC = () => {
     refetch();
   };
 
+  const toggleAddEmployee = () => {
+    setShowAddEmployee(!showAddEmployee);
+  };
+
   if (isLoading) return <div className="container">Loading...</div>;
   if (error) return <div className="container">Error: {error.message}</div>;
 
@@ -61,16 +67,22 @@ const EmployeeListPage: React.FC = () => {
     <div className="container mx-auto p-4">
       <header className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Employee List</h1>
+        <Button
+          onClick={toggleAddEmployee}
+          className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
+          variant="contained"
+        >
+          {showAddEmployee ? 'Hide Add Employee' : 'Show Add Employee'}
+        </Button>
       </header>
-      <main>
-        <Box component="div" className="mb-4">
+      {showAddEmployee && (
+        <div className="mb-4">
           <TextField
             label="Name"
             value={newEmployeeName}
             onChange={(e) => setNewEmployeeName(e.target.value)}
             className="mb-2"
             fullWidth
-            style={{ marginBottom: '16px' }} // Added margin for spacing
           />
           <TextField
             label="Email"
@@ -78,7 +90,6 @@ const EmployeeListPage: React.FC = () => {
             onChange={(e) => setNewEmployeeEmail(e.target.value)}
             className="mb-2"
             fullWidth
-            style={{ marginBottom: '16px' }} // Added margin for spacing
           />
           <label className="flex items-center mb-2">
             <input
@@ -106,23 +117,23 @@ const EmployeeListPage: React.FC = () => {
               Refresh List
             </Button>
           </div>
-        </Box>
-        <TextField
-          label="Search Employees"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="mb-4"
-          fullWidth
-        />
-        <h2 className="text-2xl font-bold mb-2">Admin Employees</h2>
-        {adminEmployees && (
-          <EmployeeList employees={adminEmployees} onRemoveEmployee={handleRemoveEmployee} />
-        )}
-        <h2 className="text-2xl font-bold mb-2">Non-Admin Employees</h2>
-        {nonAdminEmployees && (
-          <EmployeeList employees={nonAdminEmployees} onRemoveEmployee={handleRemoveEmployee} />
-        )}
-      </main>
+        </div>
+      )}
+      <TextField
+        label="Search Employees"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        className="mb-4"
+        fullWidth
+      />
+      <h2 className="text-2xl font-bold mb-2">Admin Employees</h2>
+      {adminEmployees && (
+        <EmployeeList employees={adminEmployees} onRemoveEmployee={handleRemoveEmployee} />
+      )}
+      <h2 className="text-2xl font-bold mb-2">Non-Admin Employees</h2>
+      {nonAdminEmployees && (
+        <EmployeeList employees={nonAdminEmployees} onRemoveEmployee={handleRemoveEmployee} />
+      )}
     </div>
   );
 };
