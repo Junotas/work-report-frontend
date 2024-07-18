@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
 import TimeReportList from '../components/TimeReportList';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 
 interface Employee {
   id: number;
@@ -26,6 +27,8 @@ interface TimeReportListPageProps {
 
 const TimeReportListPage: React.FC<TimeReportListPageProps> = ({ userRole }) => {
   const [timeReports, setTimeReports] = useState<TimeReport[]>([]);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteReportId, setDeleteReportId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchTimeReports = async () => {
@@ -60,14 +63,24 @@ const TimeReportListPage: React.FC<TimeReportListPageProps> = ({ userRole }) => 
     }
   };
 
-  const deleteTimeReport = async (id: number) => {
+  const handleDeleteTimeReport = (id: number) => {
     if (userRole !== 'admin') return; // Only admins can delete reports
 
-    try {
-      await axios.delete(`${API_BASE_URL}/api/time-reports/${id}`);
-      setTimeReports(timeReports.filter(report => report.id !== id));
-    } catch (error) {
-      console.error('Failed to delete time report:', error);
+    setDeleteReportId(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDeleteTimeReport = async () => {
+    if (deleteReportId !== null) {
+      try {
+        await axios.delete(`${API_BASE_URL}/api/time-reports/${deleteReportId}`);
+        setTimeReports(timeReports.filter(report => report.id !== deleteReportId));
+        setDeleteConfirmOpen(false);
+        setDeleteReportId(null);
+        alert('Time report deleted successfully!');
+      } catch (error) {
+        console.error('Failed to delete time report:', error);
+      }
     }
   };
 
@@ -79,16 +92,38 @@ const TimeReportListPage: React.FC<TimeReportListPageProps> = ({ userRole }) => 
       <h1 className="text-3xl font-bold mb-4">Time Reports</h1>
       <h2 className="text-2xl font-bold mb-2">Approved Reports</h2>
       {approvedReports.length > 0 ? (
-        <TimeReportList timeReports={approvedReports} toggleApproval={toggleApproval} deleteTimeReport={deleteTimeReport} userRole={userRole} />
+        <TimeReportList timeReports={approvedReports} toggleApproval={toggleApproval} deleteTimeReport={handleDeleteTimeReport} userRole={userRole} />
       ) : (
         <p>No approved reports found.</p>
       )}
       <h2 className="text-2xl font-bold mb-2">Non-Approved Reports</h2>
       {nonApprovedReports.length > 0 ? (
-        <TimeReportList timeReports={nonApprovedReports} toggleApproval={toggleApproval} deleteTimeReport={deleteTimeReport} userRole={userRole} />
+        <TimeReportList timeReports={nonApprovedReports} toggleApproval={toggleApproval} deleteTimeReport={handleDeleteTimeReport} userRole={userRole} />
       ) : (
         <p>No non-approved reports found.</p>
       )}
+
+      <Dialog
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this time report?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteConfirmOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmDeleteTimeReport} color="secondary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
