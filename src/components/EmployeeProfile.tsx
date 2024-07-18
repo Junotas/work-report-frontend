@@ -56,44 +56,47 @@ const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee, userRole })
       <h2 className="text-2xl font-bold mb-4">{employee.name}</h2>
       <p>Email: {employee.email}</p>
       <p>Admin: {employee.isAdmin ? 'Yes' : 'No'}</p>
+      <p>ID: {employee.id}</p>
 
-      <h3 className="text-xl font-semibold mt-6 mb-2">Report Hours Worked</h3>
       {userRole === 'user' && (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Controller
-              name="startTime"
-              control={control}
-              render={({ field }) => (
-                <DateTimePicker
-                  label="Start date"
-                  // @ts-expect-error: Type error from controller and datetimepicker
-                  value={field.value}
-                  onChange={(date) => field.onChange(date)}
-                  // @ts-expect-error: Type error from controller and datetimepicker
-                  renderInput={(params) => <TextField {...params} fullWidth />}
-                />
-              )}
-            />
-            <Controller
-              name="endTime"
-              control={control}
-              render={({ field }) => (
-                <DateTimePicker
-                  label="End date"
-                  // @ts-expect-error: Type error from controller and datetimepicker
-                  value={field.value}
-                  onChange={(date) => field.onChange(date)}
-                  // @ts-expect-error: Type error from controller and datetimepicker
-                  renderInput={(params) => <TextField {...params} fullWidth />}
-                />
-              )}
-            />
-            <Button type="submit" variant="contained" color="primary">
-              Submit Time Report
-            </Button>
-          </form>
-        </LocalizationProvider>
+        <>
+          <h3 className="text-xl font-semibold mt-6 mb-2">Report Hours Worked</h3>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Controller
+                name="startTime"
+                control={control}
+                render={({ field }) => (
+                  <DateTimePicker
+                    label="Start date"
+                    // @ts-expect-error: Type error from controller and datetimepicker
+                    value={field.value}
+                    onChange={(date) => field.onChange(date)}
+                    // @ts-expect-error: Type error from controller and datetimepicker
+                    renderInput={(params) => <TextField {...params} fullWidth />}
+                  />
+                )}
+              />
+              <Controller
+                name="endTime"
+                control={control}
+                render={({ field }) => (
+                  <DateTimePicker
+                    label="End date"
+                    // @ts-expect-error: Type error from controller and datetimepicker
+                    value={field.value}
+                    onChange={(date) => field.onChange(date)}
+                    // @ts-expect-error: Type error from controller and datetimepicker
+                    renderInput={(params) => <TextField {...params} fullWidth />}
+                  />
+                )}
+              />
+              <Button type="submit" variant="contained" color="primary">
+                Submit Time Report
+              </Button>
+            </form>
+          </LocalizationProvider>
+        </>
       )}
     </div>
   );
