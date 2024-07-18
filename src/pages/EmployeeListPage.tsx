@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useEmployees } from '../useEmployees';
 import EmployeeList from '../components/EmployeeList';
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@mui/material';
 import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
 import { FaPlus, FaSync, FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -15,10 +15,37 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
   const [newEmployeeName, setNewEmployeeName] = useState('');
   const [newEmployeeEmail, setNewEmployeeEmail] = useState('');
   const [newEmployeeIsAdmin, setNewEmployeeIsAdmin] = useState(false);
+  const [newEmployeeIsUser, setNewEmployeeIsUser] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddEmployee, setShowAddEmployee] = useState(false);
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+
+  const validateName = (name: string) => {
+    const namePattern = /^[a-zA-Z]+ [a-zA-Z]+$/;
+    if (!namePattern.test(name)) {
+      setNameError('Name must contain first and last name, and only letters');
+      return false;
+    }
+    setNameError('');
+    return true;
+  };
+
+  const validateEmail = (email: string) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setEmailError('Invalid email address');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
 
   const handleAddEmployee = async () => {
+    if (!validateName(newEmployeeName) || !validateEmail(newEmployeeEmail)) {
+      return;
+    }
+
     const newEmployee = {
       name: newEmployeeName,
       email: newEmployeeEmail,
@@ -31,6 +58,7 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
       setNewEmployeeName('');
       setNewEmployeeEmail('');
       setNewEmployeeIsAdmin(false);
+      setNewEmployeeIsUser(false);
       setShowAddEmployee(false);
     } catch (error) {
       console.error('Error adding employee:', error);
@@ -89,29 +117,37 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
             label="Name"
             value={newEmployeeName}
             onChange={(e) => setNewEmployeeName(e.target.value)}
+            onBlur={(e) => validateName(e.target.value)}
             fullWidth
-            style={{ marginBottom: '16px' }}  // Added margin for spacing
+            error={!!nameError}
+            helperText={nameError}
+            style={{ marginBottom: '16px' }}
           />
           <TextField
             label="Email"
             value={newEmployeeEmail}
             onChange={(e) => setNewEmployeeEmail(e.target.value)}
+            onBlur={(e) => validateEmail(e.target.value)}
             fullWidth
-            style={{ marginBottom: '16px' }}  // Added margin for spacing
+            error={!!emailError}
+            helperText={emailError}
+            style={{ marginBottom: '16px' }}
           />
-          <label className="flex items-center mb-2">
-            <input
-              type="checkbox"
-              checked={newEmployeeIsAdmin}
-              onChange={(e) => setNewEmployeeIsAdmin(e.target.checked)}
-              className="mr-2"
-            />
-            Admin
-          </label>
-          <div className="flex space-x-2">
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Role</FormLabel>
+            <RadioGroup row aria-label="role" name="role" value={newEmployeeIsAdmin ? 'admin' : 'user'} onChange={(e) => {
+              const role = e.target.value;
+              setNewEmployeeIsAdmin(role === 'admin');
+              setNewEmployeeIsUser(role === 'user');
+            }}>
+              <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+              <FormControlLabel value="user" control={<Radio />} label="User" />
+            </RadioGroup>
+          </FormControl>
+          <div className="flex space-x-2 mt-2">
             <Button
               onClick={handleAddEmployee}
-              disabled={!newEmployeeName || !newEmployeeEmail}
+              disabled={!newEmployeeName || !newEmployeeEmail || !newEmployeeIsAdmin && !newEmployeeIsUser}
               className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
               variant="contained"
               startIcon={<FaPlus />}
