@@ -31,20 +31,21 @@ const TimeReportList: React.FC<TimeReportListProps> = ({ timeReports, toggleAppr
 
         return (
           <li key={report.id} className="flex justify-between items-center p-2 mb-2 bg-gray-100 rounded hover:bg-gray-200">
-            <span>{`Report ID: ${report.id}, Employee: ${report.employeeName || 'Unknown'}`}</span>
-            <span>{`From: ${startTime.format('DD/MM/YYYY hh:mm A')} To: ${endTime.format('DD/MM/YYYY hh:mm A')} (${hoursWorked} hours)`}</span>
-            <div className="flex space-x-2">
-              {userRole === 'admin' && (
-                <>
-                  <button onClick={() => toggleApproval(report.id, report.isApproved)} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700">
-                    {report.isApproved ? <FaTimes /> : <FaCheck />}
-                  </button>
-                  <button onClick={() => deleteTimeReport(report.id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700">
-                    <FaTrash />
-                  </button>
-                </>
-              )}
-            </div>
+            <span className="flex-1 text-center">{`Report ID: ${report.id}`}</span>
+            <span className="flex-1 text-center">{`Employee: ${report.employeeName || 'Unknown'}`}</span>
+            <span className="flex-1 text-center">{`From: ${startTime.format('DD/MM/YYYY hh:mm A')}`}</span>
+            <span className="flex-1 text-center">{`To: ${endTime.format('DD/MM/YYYY hh:mm A')}`}</span>
+            <span className="flex-1 text-center">{`${hoursWorked} hours`}</span>
+            {userRole === 'admin' && (
+              <div className="flex space-x-2">
+                <button onClick={() => toggleApproval(report.id, report.isApproved)} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700">
+                  {report.isApproved ? <FaTimes /> : <FaCheck />}
+                </button>
+                <button onClick={() => deleteTimeReport(report.id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700">
+                  <FaTrash />
+                </button>
+              </div>
+            )}
           </li>
         );
       })}
