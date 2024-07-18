@@ -5,6 +5,7 @@ import { TextField, Button, Radio, RadioGroup, FormControlLabel, FormControl, Fo
 import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
 import { FaPlus, FaSync, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { toastError, toastSuccess } from '../components/toastUtils';
 
 interface EmployeeListPageProps {
   userRole: 'admin' | 'user';
@@ -61,8 +62,10 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
       setNewEmployeeEmail('');
       setNewEmployeeIsAdmin(false);
       setNewEmployeeIsUser(false);
+      toastSuccess('Employee added successfully!');
     } catch (error) {
       console.error('Error adding employee:', error);
+      toastError('Failed to add employee.');
     }
   };
 
@@ -78,9 +81,10 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
         refetch();
         setDeleteConfirmOpen(false);
         setDeleteEmployeeId(null);
-        alert('Employee deleted successfully!');
+        toastSuccess('Employee deleted successfully!');
       } catch (error) {
         console.error('Error removing employee:', error);
+        toastError('Failed to delete employee.');
       }
     }
   };
@@ -162,6 +166,7 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
               className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
               variant="contained"
               startIcon={<FaPlus />}
+              title={(!newEmployeeIsAdmin && !newEmployeeIsUser) ? 'Please choose a role (Admin or User)' : ''}
             >
               Add Employee
             </Button>

@@ -6,6 +6,7 @@ import { TextField, Button } from '@mui/material';
 import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
 import dayjs from 'dayjs';
+import { toastError, toastSuccess } from '../components/toastUtils';
 
 interface Employee {
   id: number;
@@ -31,7 +32,7 @@ const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee, userRole })
 
   const onSubmit: SubmitHandler<TimeReport> = async (data) => {
     if (!data.startTime || !data.endTime) {
-      alert('Please select both start and end times.');
+      toastError('Please select both start and end times.');
       return;
     }
 
@@ -43,6 +44,7 @@ const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee, userRole })
         type: 'manual',
         message: 'End time must be after start time',
       });
+      toastError('End time must be after start time.');
       return;
     }
 
@@ -55,10 +57,10 @@ const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee, userRole })
 
     try {
       await axios.post(`${API_BASE_URL}/api/time-reports`, reportData);
-      alert('Time report submitted successfully!');
+      toastSuccess('Time report submitted successfully!');
     } catch (error) {
       console.error('Error submitting time report:', error);
-      alert('Failed to submit time report.');
+      toastError('Failed to submit time report.');
     }
   };
 

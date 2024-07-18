@@ -3,6 +3,7 @@ import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
 import TimeReportList from '../components/TimeReportList';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import { toastError, toastSuccess } from '../components/toastUtils';
 
 interface Employee {
   id: number;
@@ -46,6 +47,7 @@ const TimeReportListPage: React.FC<TimeReportListPageProps> = ({ userRole }) => 
         setTimeReports(reportsWithEmployeeNames);
       } catch (error) {
         console.error('Failed to fetch time reports or employees:', error);
+        toastError('Failed to fetch time reports or employees.');
       }
     };
 
@@ -58,8 +60,10 @@ const TimeReportListPage: React.FC<TimeReportListPageProps> = ({ userRole }) => 
     try {
       await axios.patch(`${API_BASE_URL}/api/time-reports/approve/${id}`, { isApproved: !isApproved });
       setTimeReports(timeReports.map(report => report.id === id ? { ...report, isApproved: !isApproved } : report));
+      toastSuccess('Time report approval status updated successfully!');
     } catch (error) {
       console.error('Failed to update approval status:', error);
+      toastError('Failed to update approval status.');
     }
   };
 
@@ -77,9 +81,10 @@ const TimeReportListPage: React.FC<TimeReportListPageProps> = ({ userRole }) => 
         setTimeReports(timeReports.filter(report => report.id !== deleteReportId));
         setDeleteConfirmOpen(false);
         setDeleteReportId(null);
-        alert('Time report deleted successfully!');
+        toastSuccess('Time report deleted successfully!');
       } catch (error) {
         console.error('Failed to delete time report:', error);
+        toastError('Failed to delete time report.');
       }
     }
   };
