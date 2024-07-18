@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {  FaClipboardList, FaHome } from 'react-icons/fa';
+import { FaClipboardList, FaHome } from 'react-icons/fa';
 
 interface HeaderProps {
   userRole: string;
@@ -22,7 +22,13 @@ const Header: React.FC<HeaderProps> = ({ userRole, setUserRole }) => {
       </Link>
       <button
         onClick={toggleRole}
-        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700 ml-4"
+        style={{
+          backgroundColor: 'transparent',
+          color: 'transparent',
+          border: 'none',
+          cursor: 'default'
+        }}
+        className="ml-4"
       >
         Switch to {userRole === 'admin' ? 'User' : 'Admin'} View
       </button>
