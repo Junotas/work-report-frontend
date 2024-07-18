@@ -44,7 +44,7 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
   };
 
   const handleAddEmployee = async () => {
-    if (!validateName(newEmployeeName) || !validateEmail(newEmployeeEmail)) {
+    if (!validateName(newEmployeeName) || !validateEmail(newEmployeeEmail) || (!newEmployeeIsAdmin && !newEmployeeIsUser)) {
       return;
     }
 
@@ -61,7 +61,6 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
       setNewEmployeeEmail('');
       setNewEmployeeIsAdmin(false);
       setNewEmployeeIsUser(false);
-      setShowAddEmployee(false);
     } catch (error) {
       console.error('Error adding employee:', error);
     }
@@ -147,7 +146,7 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
           />
           <FormControl component="fieldset">
             <FormLabel component="legend">Role</FormLabel>
-            <RadioGroup row aria-label="role" name="role" value={newEmployeeIsAdmin ? 'admin' : 'user'} onChange={(e) => {
+            <RadioGroup row aria-label="role" name="role" value={newEmployeeIsAdmin ? 'admin' : newEmployeeIsUser ? 'user' : ''} onChange={(e) => {
               const role = e.target.value;
               setNewEmployeeIsAdmin(role === 'admin');
               setNewEmployeeIsUser(role === 'user');
@@ -159,7 +158,7 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
           <div className="flex space-x-2 mt-2">
             <Button
               onClick={handleAddEmployee}
-              disabled={!newEmployeeName || !newEmployeeEmail || !newEmployeeIsAdmin && !newEmployeeIsUser}
+              disabled={!newEmployeeName || !newEmployeeEmail || (!newEmployeeIsAdmin && !newEmployeeIsUser)}
               className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
               variant="contained"
               startIcon={<FaPlus />}
