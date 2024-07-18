@@ -27,7 +27,7 @@ interface EmployeeProfileProps {
 const dateFormat = "YYYY-MM-DDTHH:mm:ss";
 
 const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee, userRole }) => {
-  const { control, handleSubmit } = useForm<TimeReport>();
+  const { control, handleSubmit, setError, clearErrors, formState: { errors } } = useForm<TimeReport>();
 
   const onSubmit: SubmitHandler<TimeReport> = async (data) => {
     if (!data.startTime || !data.endTime) {
@@ -35,10 +35,21 @@ const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee, userRole })
       return;
     }
 
+    const startTime = dayjs(data.startTime);
+    const endTime = dayjs(data.endTime);
+
+    if (endTime.isBefore(startTime)) {
+      setError('endTime', {
+        type: 'manual',
+        message: 'End time must be after start time',
+      });
+      return;
+    }
+
     const reportData = {
       employeeId: employee.id,
-      startTime: dayjs(data.startTime).format(dateFormat),
-      endTime: dayjs(data.endTime).format(dateFormat),
+      startTime: startTime.format(dateFormat),
+      endTime: endTime.format(dateFormat),
       isApproved: false,
     };
 
@@ -71,9 +82,12 @@ const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee, userRole })
                     label="Start date"
                     // @ts-expect-error: Type error from controller and datetimepicker
                     value={field.value}
-                    onChange={(date) => field.onChange(date)}
+                    onChange={(date) => {
+                      field.onChange(date);
+                      clearErrors('endTime');
+                    }}
                     // @ts-expect-error: Type error from controller and datetimepicker
-                    renderInput={(params) => <TextField {...params} fullWidth />}
+                    renderInput={(params) => <TextField {...params} fullWidth error={!!errors.startTime} helperText={errors.startTime ? errors.startTime.message : ''} />}
                   />
                 )}
               />
@@ -85,9 +99,12 @@ const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee, userRole })
                     label="End date"
                     // @ts-expect-error: Type error from controller and datetimepicker
                     value={field.value}
-                    onChange={(date) => field.onChange(date)}
+                    onChange={(date) => {
+                      field.onChange(date);
+                      clearErrors('endTime');
+                    }}
                     // @ts-expect-error: Type error from controller and datetimepicker
-                    renderInput={(params) => <TextField {...params} fullWidth />}
+                    renderInput={(params) => <TextField {...params} fullWidth error={!!errors.endTime} helperText={errors.endTime ? errors.endTime.message : ''} />}
                   />
                 )}
               />
