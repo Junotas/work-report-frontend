@@ -17,7 +17,6 @@ const App: React.FC = () => {
         <Header userRole={userRole} setUserRole={setUserRole} />
         <Routes>
           <Route path="/" element={<EmployeeListPage userRole={userRole as 'admin' | 'user'} />} />
-          {/* @ts-expect-error: Type error from userRole assignment */}
           <Route path="/employees/:employeeId" element={<EmployeeProfilePage userRole={userRole as 'admin' | 'user'} />} />
           <Route path="/profile" element={<ProfilePage userRole={userRole as 'admin' | 'user'} />} />
           <Route path="/time-reports" element={<TimeReportListPage userRole={userRole as 'admin' | 'user'} />} />
