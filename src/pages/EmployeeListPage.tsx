@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useEmployees } from '../useEmployees';
 import EmployeeList from '../components/EmployeeList';
-import { TextField, Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@mui/material';
+import { TextField, Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
 import { FaPlus, FaSync, FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -20,11 +20,13 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
   const [showAddEmployee, setShowAddEmployee] = useState(false);
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteEmployeeId, setDeleteEmployeeId] = useState<number | null>(null);
 
   const validateName = (name: string) => {
-    const namePattern = /^[a-zA-Z]+ [a-zA-Z]+$/;
+    const namePattern = /^[a-zA-Z]+( [a-zA-Z]+)+$/;
     if (!namePattern.test(name)) {
-      setNameError('Name must contain first and last name, and only letters');
+      setNameError('Name must contain at least two names, and only letters');
       return false;
     }
     setNameError('');
@@ -65,12 +67,22 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
     }
   };
 
-  const handleRemoveEmployee = async (employeeId: number) => {
-    try {
-      await axios.delete(`${API_BASE_URL}/api/employees/${employeeId}`);
-      refetch();
-    } catch (error) {
-      console.error('Error removing employee:', error);
+  const handleRemoveEmployee = (employeeId: number) => {
+    setDeleteEmployeeId(employeeId);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmRemoveEmployee = async () => {
+    if (deleteEmployeeId !== null) {
+      try {
+        await axios.delete(`${API_BASE_URL}/api/employees/${deleteEmployeeId}`);
+        refetch();
+        setDeleteConfirmOpen(false);
+        setDeleteEmployeeId(null);
+        alert('Employee deleted successfully!');
+      } catch (error) {
+        console.error('Error removing employee:', error);
+      }
     }
   };
 
@@ -180,6 +192,28 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
       {nonAdminEmployees && (
         <EmployeeList employees={nonAdminEmployees} onRemoveEmployee={handleRemoveEmployee} userRole={userRole} />
       )}
+
+      <Dialog
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this employee?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteConfirmOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmRemoveEmployee} color="secondary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
