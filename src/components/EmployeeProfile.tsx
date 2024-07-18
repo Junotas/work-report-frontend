@@ -2,11 +2,13 @@ import React from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, Card, CardContent, Typography, Box } from '@mui/material';
 import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
 import dayjs from 'dayjs';
 import { toastError, toastSuccess } from '../components/toastUtils';
+import { FaPlus } from "react-icons/fa";
+
 
 interface Employee {
   id: number;
@@ -65,59 +67,99 @@ const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee, userRole })
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">{employee.name}</h2>
-      <p>Email: {employee.email}</p>
-      <p>Admin: {employee.isAdmin ? 'Yes' : 'No'}</p>
-      <p>ID: {employee.id}</p>
+    <Card className="p-4 shadow-lg">
+      <CardContent>
+        <Typography variant="h4" component="div" className="mb-4">
+          {employee.name}
+        </Typography>
+        <Typography variant="body1" className="mb-2">
+          <strong>Email:</strong> {employee.email}
+        </Typography>
+        <Typography variant="body1" className="mb-2">
+          <strong>Admin:</strong> {employee.isAdmin ? 'Yes' : 'No'}
+        </Typography>
+        <Typography variant="body1" className="mb-4">
+          <strong>ID:</strong> {employee.id}
+        </Typography>
 
-      {userRole === 'user' && (
-        <>
-          <h3 className="text-xl font-semibold mt-6 mb-2">Report Hours Worked</h3>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Controller
-                name="startTime"
-                control={control}
-                render={({ field }) => (
-                  <DateTimePicker
-                    label="Start date"
-                    // @ts-expect-error: Type error from controller and datetimepicker
-                    value={field.value}
-                    onChange={(date) => {
-                      field.onChange(date);
-                      clearErrors('endTime');
-                    }}
-                    // @ts-expect-error: Type error from controller and datetimepicker
-                    renderInput={(params) => <TextField {...params} fullWidth error={!!errors.startTime} helperText={errors.startTime ? errors.startTime.message : ''} />}
+        {userRole === 'user' && (
+          <>
+            <Typography variant="h5" component="div" className="mt-6 mb-4">
+              Report Hours Worked
+            </Typography>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <Box display="flex" flexDirection="column" alignItems="center" className="space-y-4 ml-4">
+                  <Controller
+                    name="startTime"
+                    control={control}
+                    render={({ field }) => (
+                      <DateTimePicker
+                        label="Start date"
+                        // @ts-expect-error: Type error from controller and datetimepicker
+                        value={field.value}
+                        onChange={(date) => {
+                          field.onChange(date);
+                          clearErrors('endTime');
+                        }}
+                        // @ts-expect-error: Type error from controller and datetimepicker
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            fullWidth
+                            variant="outlined"
+                            className="bg-white rounded"
+                            error={!!errors.startTime}
+                            helperText={errors.startTime ? errors.startTime.message : ''}
+                          />
+                        )}
+                      />
+                    )}
                   />
-                )}
-              />
-              <Controller
-                name="endTime"
-                control={control}
-                render={({ field }) => (
-                  <DateTimePicker
-                    label="End date"
-                    // @ts-expect-error: Type error from controller and datetimepicker
-                    value={field.value}
-                    onChange={(date) => {
-                      field.onChange(date);
-                      clearErrors('endTime');
-                    }}
-                    // @ts-expect-error: Type error from controller and datetimepicker
-                    renderInput={(params) => <TextField {...params} fullWidth error={!!errors.endTime} helperText={errors.endTime ? errors.endTime.message : ''} />}
+                  <Controller
+                    name="endTime"
+                    control={control}
+                    render={({ field }) => (
+                      <DateTimePicker
+                        label="End date"
+                        // @ts-expect-error: Type error from controller and datetimepicker
+                        value={field.value}
+                        onChange={(date) => {
+                          field.onChange(date);
+                          clearErrors('endTime');
+                        }}
+                        // @ts-expect-error: Type error from controller and datetimepicker
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            fullWidth
+                            variant="outlined"
+                            className="bg-white rounded"
+                            error={!!errors.endTime}
+                            helperText={errors.endTime ? errors.endTime.message : ''}
+                          />
+                        )}
+                      />
+                    )}
                   />
-                )}
-              />
-              <Button type="submit" variant="contained" color="primary">
-                Submit Time Report
-              </Button>
-            </form>
-          </LocalizationProvider>
-        </>
-      )}
-    </div>
+                </Box>
+                <Box display="flex" justifyContent="center">
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
+                    startIcon={<FaPlus />}
+                  >
+                    Submit Time Report
+                  </Button>
+                </Box>
+              </form>
+            </LocalizationProvider>
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
