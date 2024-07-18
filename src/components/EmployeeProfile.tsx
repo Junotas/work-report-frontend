@@ -1,3 +1,4 @@
+import React from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -20,11 +21,12 @@ interface TimeReport {
 
 interface EmployeeProfileProps {
   employee: Employee;
+  userRole: 'admin' | 'user';
 }
 
 const dateFormat = "YYYY-MM-DDTHH:mm:ss";
 
-const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee }) => {
+const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee, userRole }) => {
   const { control, handleSubmit } = useForm<TimeReport>();
 
   const onSubmit: SubmitHandler<TimeReport> = async (data) => {
@@ -56,41 +58,43 @@ const EmployeeProfile: React.FC<EmployeeProfileProps> = ({ employee }) => {
       <p>Admin: {employee.isAdmin ? 'Yes' : 'No'}</p>
 
       <h3 className="text-xl font-semibold mt-6 mb-2">Report Hours Worked</h3>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-         <Controller
-            name="startTime"
-            control={control}
-            render={({ field }) => (
-              <DateTimePicker
-                label="Start date"
-                // @ts-expect-error: Type error from controller and datetimepicker
-                value={field.value}
-                onChange={(date) => field.onChange(date)}
-                // @ts-expect-error: Type error from controller and datetimepicker
-                renderInput={(params) => <TextField {...params} fullWidth />}
+      {userRole === 'user' && (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Controller
+              name="startTime"
+              control={control}
+              render={({ field }) => (
+                <DateTimePicker
+                  label="Start date"
+                  // @ts-expect-error: Type error from controller and datetimepicker
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  // @ts-expect-error: Type error from controller and datetimepicker
+                  renderInput={(params) => <TextField {...params} fullWidth />}
                 />
-            )}
-          />
-          <Controller
-            name="endTime"
-            control={control}
-            render={({ field }) => (
-              <DateTimePicker
-                label="End date"
-                // @ts-expect-error: Type error from controller and datetimepicker
-                value={field.value}
-                onChange={(date) => field.onChange(date)}
-                // @ts-expect-error: Type error from controller and datetimepicker
-                renderInput={(params) => <TextField {...params} fullWidth />}
-              />
-            )}
-          />
-          <Button type="submit" variant="contained" color="primary">
-            Submit Time Report
-          </Button>
-        </form>
-      </LocalizationProvider>
+              )}
+            />
+            <Controller
+              name="endTime"
+              control={control}
+              render={({ field }) => (
+                <DateTimePicker
+                  label="End date"
+                  // @ts-expect-error: Type error from controller and datetimepicker
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  // @ts-expect-error: Type error from controller and datetimepicker
+                  renderInput={(params) => <TextField {...params} fullWidth />}
+                />
+              )}
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Submit Time Report
+            </Button>
+          </form>
+        </LocalizationProvider>
+      )}
     </div>
   );
 };

@@ -6,7 +6,11 @@ import axios from 'axios';
 import { API_BASE_URL } from '../apiConfig';
 import { FaPlus, FaSync, FaEye, FaEyeSlash } from 'react-icons/fa';
 
-const EmployeeListPage: React.FC = () => {
+interface EmployeeListPageProps {
+  userRole: 'admin' | 'user';
+}
+
+const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
   const { isLoading, error, data: employees, refetch } = useEmployees();
   const [newEmployeeName, setNewEmployeeName] = useState('');
   const [newEmployeeEmail, setNewEmployeeEmail] = useState('');
@@ -68,16 +72,18 @@ const EmployeeListPage: React.FC = () => {
     <div className="container mx-auto p-4">
       <header className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Employee List</h1>
-        <Button
-          onClick={toggleAddEmployee}
-          className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
-          variant="contained"
-          startIcon={showAddEmployee ? <FaEyeSlash /> : <FaEye />}
-        >
-          {showAddEmployee ? 'Hide Add Employee' : 'Show Add Employee'}
-        </Button>
+        {userRole === 'admin' && (
+          <Button
+            onClick={toggleAddEmployee}
+            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
+            variant="contained"
+            startIcon={showAddEmployee ? <FaEyeSlash /> : <FaEye />}
+          >
+            {showAddEmployee ? 'Hide Add Employee' : 'Show Add Employee'}
+          </Button>
+        )}
       </header>
-      {showAddEmployee && (
+      {showAddEmployee && userRole === 'admin' && (
         <div className="mb-4">
           <TextField
             label="Name"
@@ -132,11 +138,11 @@ const EmployeeListPage: React.FC = () => {
       />
       <h2 className="text-2xl font-bold mb-2">Admin Employees</h2>
       {adminEmployees && (
-        <EmployeeList employees={adminEmployees} onRemoveEmployee={handleRemoveEmployee} />
+        <EmployeeList employees={adminEmployees} onRemoveEmployee={handleRemoveEmployee} userRole={userRole} />
       )}
       <h2 className="text-2xl font-bold mb-2">Non-Admin Employees</h2>
       {nonAdminEmployees && (
-        <EmployeeList employees={nonAdminEmployees} onRemoveEmployee={handleRemoveEmployee} />
+        <EmployeeList employees={nonAdminEmployees} onRemoveEmployee={handleRemoveEmployee} userRole={userRole} />
       )}
     </div>
   );

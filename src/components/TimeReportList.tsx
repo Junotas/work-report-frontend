@@ -18,9 +18,10 @@ interface TimeReportListProps {
   timeReports: TimeReport[];
   toggleApproval: (id: number, isApproved: boolean) => void;
   deleteTimeReport: (id: number) => void;
+  userRole: 'admin' | 'user';
 }
 
-const TimeReportList: React.FC<TimeReportListProps> = ({ timeReports, toggleApproval, deleteTimeReport }) => {
+const TimeReportList: React.FC<TimeReportListProps> = ({ timeReports, toggleApproval, deleteTimeReport, userRole }) => {
   return (
     <ul className="list-none p-0">
       {timeReports.map((report) => (
@@ -28,12 +29,16 @@ const TimeReportList: React.FC<TimeReportListProps> = ({ timeReports, toggleAppr
           <span>{`Report ID: ${report.id}, Employee: ${report.employeeName || 'Unknown'}`}</span>
           <span>{`From: ${dayjs(report.startTime).format('DD/MM/YYYY hh:mm')} To: ${dayjs(report.endTime).format('DD/MM/YYYY hh:mm')}`}</span>
           <div className="flex space-x-2">
-            <button onClick={() => toggleApproval(report.id, report.isApproved)} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700">
-              {report.isApproved ? <FaTimes /> : <FaCheck />}
-            </button>
-            <button onClick={() => deleteTimeReport(report.id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700">
-              <FaTrash />
-            </button>
+            {userRole === 'admin' && (
+              <>
+                <button onClick={() => toggleApproval(report.id, report.isApproved)} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700">
+                  {report.isApproved ? <FaTimes /> : <FaCheck />}
+                </button>
+                <button onClick={() => deleteTimeReport(report.id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700">
+                  <FaTrash />
+                </button>
+              </>
+            )}
           </div>
         </li>
       ))}

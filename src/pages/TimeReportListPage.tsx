@@ -20,7 +20,11 @@ interface TimeReport {
   isApproved: boolean;
 }
 
-const TimeReportListPage: React.FC = () => {
+interface TimeReportListPageProps {
+  userRole: 'admin' | 'user';
+}
+
+const TimeReportListPage: React.FC<TimeReportListPageProps> = ({ userRole }) => {
   const [timeReports, setTimeReports] = useState<TimeReport[]>([]);
 
   useEffect(() => {
@@ -46,6 +50,8 @@ const TimeReportListPage: React.FC = () => {
   }, []);
 
   const toggleApproval = async (id: number, isApproved: boolean) => {
+    if (userRole !== 'admin') return; // Only admins can approve or disapprove reports
+
     try {
       await axios.patch(`${API_BASE_URL}/api/time-reports/approve/${id}`, { isApproved: !isApproved });
       setTimeReports(timeReports.map(report => report.id === id ? { ...report, isApproved: !isApproved } : report));
@@ -55,6 +61,8 @@ const TimeReportListPage: React.FC = () => {
   };
 
   const deleteTimeReport = async (id: number) => {
+    if (userRole !== 'admin') return; // Only admins can delete reports
+
     try {
       await axios.delete(`${API_BASE_URL}/api/time-reports/${id}`);
       setTimeReports(timeReports.filter(report => report.id !== id));
@@ -71,13 +79,13 @@ const TimeReportListPage: React.FC = () => {
       <h1 className="text-3xl font-bold mb-4">Time Reports</h1>
       <h2 className="text-2xl font-bold mb-2">Approved Reports</h2>
       {approvedReports.length > 0 ? (
-        <TimeReportList timeReports={approvedReports} toggleApproval={toggleApproval} deleteTimeReport={deleteTimeReport} />
+        <TimeReportList timeReports={approvedReports} toggleApproval={toggleApproval} deleteTimeReport={deleteTimeReport} userRole={userRole} />
       ) : (
         <p>No approved reports found.</p>
       )}
       <h2 className="text-2xl font-bold mb-2">Non-Approved Reports</h2>
       {nonApprovedReports.length > 0 ? (
-        <TimeReportList timeReports={nonApprovedReports} toggleApproval={toggleApproval} deleteTimeReport={deleteTimeReport} />
+        <TimeReportList timeReports={nonApprovedReports} toggleApproval={toggleApproval} deleteTimeReport={deleteTimeReport} userRole={userRole} />
       ) : (
         <p>No non-approved reports found.</p>
       )}

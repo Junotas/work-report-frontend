@@ -3,7 +3,11 @@ import { useParams } from 'react-router-dom';
 import { useEmployees } from '../useEmployees';
 import EmployeeProfile from '../components/EmployeeProfile';
 
-const EmployeeProfilePage: React.FC = () => {
+interface EmployeeProfilePageProps {
+  userRole: 'admin' | 'user';
+}
+
+const EmployeeProfilePage: React.FC<EmployeeProfilePageProps> = ({ userRole }) => {
   const { employeeId } = useParams<{ employeeId: string }>();
   const { isLoading, error, data: employees } = useEmployees();
 
@@ -20,7 +24,7 @@ const EmployeeProfilePage: React.FC = () => {
         <h1 className="text-3xl font-bold">Employee Profile</h1>
       </header>
       <main>
-        <EmployeeProfile employee={employee} />
+        <EmployeeProfile employee={employee} userRole={userRole} />
       </main>
     </div>
   );
