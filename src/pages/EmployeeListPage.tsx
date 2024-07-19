@@ -38,19 +38,20 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
   const [deleteEmployeeId, setDeleteEmployeeId] = useState<number | null>(null);
 
   const validateName = (name: string) => {
-    const namePattern = /^[a-zA-Z]+( [a-zA-Z]+)+$/;
+    const namePattern = /^[a-zA-ZÀ-ÖØ-öø-ÿ'’-]+( [a-zA-ZÀ-ÖØ-öø-ÿ'’-]+)+$/;
     if (!namePattern.test(name)) {
-      setNameError("Name must contain at least two names, and only letters");
+      setNameError("Name must contain at least two names, using only letters, hyphens, and apostrophes.");
       return false;
     }
     setNameError("");
     return true;
   };
+  
 
   const validateEmail = (email: string) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
-      setEmailError("Invalid email address");
+      setEmailError("Invalid email: must include '@' and a domain (e.g., example@domain.com).");
       return false;
     }
     setEmailError("");
