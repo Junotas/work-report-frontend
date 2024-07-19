@@ -190,7 +190,7 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
                 control={<Radio />}
                 label="Admin"
               />
-              <FormControlLabel value="user" control={<Radio />} label="User" />
+              <FormControlLabel value="user" control={<Radio />} label="Employee" />
             </RadioGroup>
           </FormControl>
           <div className="flex space-x-2 mt-2">
@@ -230,7 +230,7 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = ({ userRole }) => {
         className="mb-4"
         fullWidth
       />
-      <h2 className="text-2xl font-bold mb-2">Admin Employees</h2>
+      <h2 className="text-2xl font-bold mb-2">Administrators</h2>
       {adminEmployees && (
         <EmployeeList
           employees={adminEmployees}
